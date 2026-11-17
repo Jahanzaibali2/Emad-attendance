@@ -1,19 +1,13 @@
 import Image from "next/image";
-import { auth, signIn } from "@/auth";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { AuthError } from "next-auth";
+import { LoginForm } from "@/components/LoginForm";
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
+export default async function LoginPage() {
   const session = await auth();
   if (session?.user) {
     redirect(session.user.role === "OWNER" ? "/monitor" : "/today");
   }
-  const params = await searchParams;
-  const showError = Boolean(params.error);
 
   return (
     <main className="login-shell relative flex min-h-full flex-1 flex-col lg:flex-row">
@@ -39,7 +33,7 @@ export default async function LoginPage({
       <section className="relative flex w-full flex-1 flex-col justify-center px-6 py-10 sm:px-10 lg:w-[48%] lg:px-16 xl:px-20">
         <div className="mx-auto w-full max-w-md animate-rise">
           <p className="font-display text-[clamp(2.5rem,6vw,3.75rem)] leading-[1.05] tracking-tight text-ink">
-            Emad's
+            Emad&apos;s
             <span className="block text-gold-deep">Attendance</span>
           </p>
           <p className="mt-4 max-w-sm text-base text-slate">
@@ -51,56 +45,7 @@ export default async function LoginPage({
 
           <div className="mt-8 h-px w-16 bg-gold" aria-hidden />
 
-          <form
-            className="mt-8 flex flex-col gap-5"
-            action={async (formData) => {
-              "use server";
-              try {
-                await signIn("credentials", {
-                  email: String(formData.get("email") ?? ""),
-                  password: String(formData.get("password") ?? ""),
-                  redirectTo: "/",
-                });
-              } catch (error) {
-                if (error instanceof AuthError) {
-                  redirect("/login?error=1");
-                }
-                throw error;
-              }
-            }}
-          >
-            <label className="flex flex-col gap-2 text-sm text-slate">
-              Email
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="username"
-                className="border border-line bg-transparent px-3 py-3 text-base text-ink transition focus-visible:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-              />
-            </label>
-            <label className="flex flex-col gap-2 text-sm text-slate">
-              Password
-              <input
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                className="border border-line bg-transparent px-3 py-3 text-base text-ink transition focus-visible:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-              />
-            </label>
-            {showError ? (
-              <p className="text-sm text-absent" role="alert">
-                Invalid email or password
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              className="mt-1 bg-gold px-4 py-3.5 font-display text-xl text-ink transition hover:bg-gold-deep hover:text-parchment focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-deep"
-            >
-              Sign in
-            </button>
-          </form>
+          <LoginForm />
         </div>
       </section>
     </main>

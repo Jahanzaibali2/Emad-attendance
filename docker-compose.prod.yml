@@ -1,0 +1,10 @@
+# VPS production — no host Postgres port; app on :3000
+services:
+  db:
+    ports: !override []
+  app:
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+  # ensure db also restarts
+# note: compose merge — set restart on db via command below if needed
