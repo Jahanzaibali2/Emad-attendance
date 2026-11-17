@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.tmp-app
+coverage
+*.md
+!README.md
+.env
+.env.*
+!.env.example
+docs
+agent-transcripts

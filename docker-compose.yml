@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: emad
+      POSTGRES_PASSWORD: emad
+      POSTGRES_DB: emad_attendance
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U emad -d emad_attendance"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://emad:emad@db:5432/emad_attendance?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:-dev-change-me-to-a-long-random-string}
+      AUTH_URL: ${AUTH_URL:-http://localhost:3000}
+      UPLOAD_DIR: /app/uploads
+      SEED_EMPLOYEE_EMAIL: ${SEED_EMPLOYEE_EMAIL:-emad@example.com}
+      SEED_EMPLOYEE_PASSWORD: ${SEED_EMPLOYEE_PASSWORD:-emad-change-me}
+      SEED_OWNER_EMAIL: ${SEED_OWNER_EMAIL:-owner@example.com}
+      SEED_OWNER_PASSWORD: ${SEED_OWNER_PASSWORD:-owner-change-me}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

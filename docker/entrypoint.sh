@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+npx prisma migrate deploy
+npx tsx prisma/seed.ts
+exec npx next start -H 0.0.0.0 -p 3000

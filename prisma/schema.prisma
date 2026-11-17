@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  OWNER
+}
+
+enum EndReason {
+  CLOCK_OUT
+  PAUSE
+  AUTO_CLOSED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+}
+
+model EmployeeProfile {
+  id                String   @id @default(cuid())
+  displayName       String
+  expectedStart     String   @default("14:00")
+  expectedEnd       String   @default("23:00")
+  graceMinutes      Int      @default(15)
+  dailyTargetHours  Float    @default(8)
+  monthlySalaryPkr  Int      @default(15000)
+  createdAt         DateTime @default(now())
+  sessions          TimeSession[]
+  dailySummaries    DailySummary[]
+}
+
+model DailySummary {
+  id         String         @id @default(cuid())
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
+  workDate   DateTime       @db.Date
+  body       String         @default("")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  images     SummaryImage[]
+
+  @@unique([employeeId, workDate])
+}
+
+model SummaryImage {
+  id        String       @id @default(cuid())
+  summaryId String
+  summary   DailySummary @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+  filename  String
+  mimeType  String
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+
+  @@index([summaryId])
+}
+
+model TimeSession {
+  id         String          @id @default(cuid())
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
+  workDate   DateTime        @db.Date
+  startedAt  DateTime
+  endedAt    DateTime?
+  endReason  EndReason?
+  createdAt  DateTime        @default(now())
+
+  @@index([employeeId, workDate])
+  @@index([employeeId, endedAt])
+}

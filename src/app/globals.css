@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #1a1408;
+  --parchment: #f7f1e3;
+  --gold: #c5a046;
+  --gold-deep: #8b6914;
+  --slate: #5c5346;
+  --line: #e0d4b8;
+  --absent: rgba(26, 20, 8, 0.45);
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-parchment: var(--parchment);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-slate: var(--slate);
+  --color-line: var(--line);
+  --color-absent: var(--absent);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-source-sans);
+}
+
+body {
+  background-color: var(--parchment);
+  /* soft top wash only — avoids a mid-page gold band on long pages */
+  background-image: radial-gradient(
+    ellipse 100% 40% at 50% 0%,
+    rgba(197, 160, 70, 0.08),
+    transparent 70%
+  );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-source-sans), "Source Sans 3", sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Fraunces, serif;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.45s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+}
+
+.clock-btn:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-btn:active {
+    transform: none;
+  }
+}
+
+.login-shell {
+  background-color: var(--parchment);
+  background-image:
+    radial-gradient(
+      ellipse 90% 70% at 85% 20%,
+      rgba(197, 160, 70, 0.16),
+      transparent 50%
+    ),
+    linear-gradient(180deg, #faf6ec 0%, var(--parchment) 100%);
+}
+
+.login-hero {
+  animation: login-hero-in 0.7s ease-out both;
+}
+
+@keyframes login-hero-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-hero {
+    animation: none;
+  }
+}
